@@ -1,1 +1,34 @@
+name: Scheduled Fork Sync
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Triggers every 5 minutes
+  workflow_dispatch:     # Allows you to click "Run workflow" manually to test it
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # CRUCIAL: Grants permission to write/push changes back to your fork
+
+    steps:
+      - name: Sync upstream changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.repos.mergeUpstream({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                branch: 'main'  # IMPORTANT: Change this to 'master' if your fork uses master
+              });
+              console.log('Successfully synced with upstream!');
+            } catch (error) {
+              // Prevents the entire workflow from showing a red "Failure" icon if there are simply no new changes
+              if (error.message.includes('Nothing to merge')) {
+                console.log('No new updates found on upstream repository.');
+              } else {
+                throw error; // Re-throws actual structural errors so you know if it's broken
+              }
+            }
 
