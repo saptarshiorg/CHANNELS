@@ -2,40 +2,88 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<title>Rishi EV - Saptarshi TV</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
 <style>
+:root{
+  --gold:#FF6A1A; --gold-light:#FFB347; --gold-dark:#C2270F;
+  --diamond:#00D9FF; --diamond-dark:#0A4A57;
+  --lavender:#FFB347; --live-red:#F04FB0; --white:#FFFFFF;
+  --text-muted:rgba(255,255,255,.55); --text-dim:rgba(255,255,255,.32);
+  --s0:#000000; --s1:rgba(255,255,255,.03); --s2:rgba(255,255,255,.055); --s3:rgba(255,255,255,.08);
+  --glass:rgba(255,255,255,.035); --glass-h:rgba(255,255,255,.07);
+  --blur:blur(20px) saturate(1.8); --blur-sm:blur(12px) saturate(1.5);
+  --ease:cubic-bezier(0.25,0.46,0.45,0.94); --spring:cubic-bezier(0.34,1.3,0.64,1);
+  --grad-gold:linear-gradient(135deg,#FFB347 0%,#00D9FF 55%,#0A4A57 100%);
+  --grad-brand:linear-gradient(135deg,#000000 0%,#0A4A57 50%,#00D9FF 100%);
+  --font-display:'Chakra Petch','Rajdhani',sans-serif;
+  --font-body:'Space Grotesk','Syne',sans-serif;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;
-  font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+html,body{width:100%;height:100%;background:var(--s0);overflow:hidden;
+  font-family:var(--font-body);
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
-#overlay{position:fixed;inset:0;background:#0a0a0a;z-index:9999;
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
-#overlay svg{animation:spin 1s linear infinite}
+#overlay{position:fixed;inset:0;z-index:9999;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(0,217,255,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 40% at 85% 80%, rgba(0,217,255,0.12) 0%, transparent 60%),
+    #000;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#overlay svg{animation:spin 1s linear infinite;filter:drop-shadow(0 0 10px rgba(0,217,255,.35))}
 @keyframes spin{to{transform:rotate(360deg)}}
-#overlay p{color:#555;font-size:13px;letter-spacing:.4px;
-  text-align:center;padding:0 24px;font-weight:500}
+#overlay p{color:var(--text-muted);font-size:13px;letter-spacing:.4px;
+  text-align:center;padding:0 24px;font-weight:600;font-family:var(--font-display)}
 
-#channel-list{position:fixed;inset:0;background:#0a0a0a;z-index:9998;
+#channel-list{position:fixed;inset:0;z-index:9998;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(0,217,255,0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(0,217,255,0.10) 0%, transparent 60%),
+    #000;
   display:none;flex-direction:column;overflow-y:auto;
-  padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
-#channel-list h1{color:#fff;font-size:16px;font-weight:600;letter-spacing:.5px;
-  margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #141414;text-align:center}
-#ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.ch-card{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:16px 12px;
-  cursor:pointer;text-decoration:none;display:flex;align-items:center;
-  justify-content:center;text-align:center;
-  transition:background .2s,border-color .2s,transform .15s;
+  padding:max(20px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+
+.brand-header{display:flex;flex-direction:column;align-items:center;gap:4px;
+  margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand-header .accent-bar{width:44px;height:3px;border-radius:8px;
+  background:linear-gradient(180deg,#00D9FF,#00D9FF);
+  box-shadow:0 0 10px rgba(0,217,255,.35);margin-bottom:10px}
+.brand-title{font-family:var(--font-display);font-weight:800;font-size:22px;
+  letter-spacing:.04em;color:var(--white);text-align:center}
+.brand-title span{background:var(--grad-gold);-webkit-background-clip:text;
+  background-clip:text;-webkit-text-fill-color:transparent}
+.brand-sub{font-family:var(--font-display);font-weight:600;font-size:11px;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--lavender);opacity:.85}
+
+#ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.ch-card{
+  background:var(--glass);
+  backdrop-filter:var(--blur-sm);-webkit-backdrop-filter:var(--blur-sm);
+  border-radius:10px;padding:18px 12px;
+  cursor:pointer;text-decoration:none;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;text-align:center;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.04);
+  transition:transform .28s var(--spring),box-shadow .28s var(--ease),background .2s;
   -webkit-tap-highlight-color:transparent}
-.ch-card:hover{background:#161616;border-color:#252525}
-.ch-card:active{transform:scale(.96);background:#1c1c1c}
-.ch-card:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
-.ch-card span{color:#e0e0e0;font-size:13px;font-weight:500;line-height:1.4}
+.ch-card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.055) 0%,transparent 50%);
+  border-radius:inherit;pointer-events:none}
+.ch-card:hover{background:var(--glass-h);transform:translateY(-4px) scale(1.02);
+  box-shadow:0 16px 50px rgba(0,0,0,.75),0 0 28px rgba(0,217,255,.25)}
+.ch-card:active{transform:scale(.97)}
+.ch-card:focus-visible{outline:2px solid var(--diamond);outline-offset:2px}
+.ch-card .live-dot{width:6px;height:6px;border-radius:50%;background:var(--live-red);
+  box-shadow:0 0 8px var(--live-red);animation:livePulse 1.5s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.ch-card span.ch-label{color:var(--white);font-size:12px;font-weight:700;line-height:1.35;
+  font-family:var(--font-display);letter-spacing:.02em}
 
 #pc{position:fixed;inset:0;background:#000;display:none;
   align-items:center;justify-content:center;touch-action:manipulation}
@@ -45,16 +93,17 @@ video.mode-cover{object-fit:cover}
 
 #status{position:fixed;top:max(12px,env(safe-area-inset-top));
   right:max(12px,env(safe-area-inset-right));z-index:9997;
-  padding:5px 13px;background:rgba(8,8,8,.9);
-  border:1px solid rgba(255,255,255,.05);
-  font-size:11px;font-weight:500;letter-spacing:.02em;border-radius:20px;
+  padding:5px 13px;background:rgba(8,8,9,.9);
+  border:1px solid rgba(255,255,255,.08);
+  font-family:var(--font-display);
+  font-size:11px;font-weight:600;letter-spacing:.02em;border-radius:20px;
   pointer-events:none;opacity:0;transition:opacity .3s;
   max-width:260px;text-align:right;
-  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  backdrop-filter:var(--blur-sm);-webkit-backdrop-filter:var(--blur-sm)}
 #status.show{opacity:1}
-#status.ok{color:#38bdf8}
-#status.warn{color:#fb923c}
-#status.err{color:#f87171}
+#status.ok{color:var(--diamond)}
+#status.warn{color:var(--gold-light)}
+#status.err{color:var(--live-red)}
 
 .sp-btn{
   background:transparent!important;border:none!important;
@@ -64,11 +113,11 @@ video.mode-cover{object-fit:cover}
   -webkit-tap-highlight-color:transparent}
 .sp-btn:hover{opacity:1}
 .sp-btn:active{opacity:1;transform:scale(.92)}
-.sp-btn:focus-visible{outline:2px solid #38bdf8;outline-offset:2px;border-radius:6px}
+.sp-btn:focus-visible{outline:2px solid var(--diamond);outline-offset:2px;border-radius:6px}
 .sp-btn svg{width:18px;height:18px;display:block;pointer-events:none;flex-shrink:0}
-.sp-btn.active{opacity:1;color:#38bdf8!important}
+.sp-btn.active{opacity:1;color:var(--diamond)!important}
 .fit-ratio{font-size:11px;font-weight:600;letter-spacing:.2px;line-height:1;
-  white-space:nowrap;pointer-events:none}
+  white-space:nowrap;pointer-events:none;font-family:var(--font-display)}
 .shaka-controls-container button{color:#fff!important}
 .shaka-video-container{background-color:#000!important}
 
@@ -83,7 +132,7 @@ video.mode-cover{object-fit:cover}
 <div id="overlay">
   <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
     <circle cx="20" cy="20" r="16" stroke="#161616" stroke-width="4"/>
-    <path d="M20 4a16 16 0 0 1 16 16" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M20 4a16 16 0 0 1 16 16" stroke="#00D9FF" stroke-width="4" stroke-linecap="round"/>
   </svg>
   <p id="loadMsg">Loading…</p>
 </div>
@@ -91,7 +140,11 @@ video.mode-cover{object-fit:cover}
 <div id="status"></div>
 
 <div id="channel-list">
-  <h1>CnpTVOfficial</h1>
+  <div class="brand-header">
+    <div class="accent-bar"></div>
+    <div class="brand-title">RISHI <span>EV</span></div>
+    <div class="brand-sub">Saptarshi TV</div>
+  </div>
   <div id="ch-grid"></div>
 </div>
 
@@ -177,7 +230,7 @@ function renderList(channels){
     var a=document.createElement("a");
     a.className="ch-card";
     a.href="?id="+encodeURIComponent(ch.id);
-    a.innerHTML="<span>"+ch.name+"</span>";
+    a.innerHTML="<span class=\"live-dot\"></span><span class=\"ch-label\">"+ch.name+"</span>";
     f.appendChild(a);
   });
   $grid.appendChild(f);
@@ -467,7 +520,7 @@ async function main(){
   if(!id){ renderList(data.channels); return; }
   var ch=data.channels.find(function(c){ return c.id===id; });
   if(!ch){ errMsg("Channel not found."); return; }
-  document.title=ch.name;
+  document.title=ch.name+" — Rishi EV - Saptarshi TV";
   await startPlayer(ch);
 }
 
