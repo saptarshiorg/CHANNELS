@@ -13,16 +13,11 @@
 <link rel="preconnect" href="https://www.jiotv.com/">
 <link rel="dns-prefetch" href="https://www.jiotv.com/">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.2.4/dist/controls.css">
-<link rel="preconnect" href="https://api.fontshare.com">
-<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&display=swap">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:'Satoshi','Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{
-  width:100%;height:100%;
-  background:#FFE1EC;
-  color:#C2185B;
-  overflow:hidden;
-  font-family:'Satoshi','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  width:100%;height:100%;background:#0a0a0a;overflow:hidden;
+  font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none
 }
 
@@ -36,69 +31,28 @@ html,body{
 }
 
 #overlay{
-  position:fixed;inset:0;z-index:9999;
-  overflow:hidden;
-  background:#000
+  position:fixed;inset:0;background:#0a0a0a;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px
 }
+#overlay svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 #overlay p{
-  position:absolute;left:0;right:0;bottom:max(28px,env(safe-area-inset-bottom));z-index:2;
-  color:rgba(255,255,255,0.85);font-size:12px;letter-spacing:.5px;
+  color:#505050;font-size:12px;letter-spacing:.5px;
   text-align:center;padding:0 24px;font-weight:500
 }
 
-.loading-gif-wrap{
-  position:absolute;inset:0;
-  overflow:hidden
-}
-
-.loading-gif-wrap .tenor-gif-embed{
-  position:absolute;top:50%;left:50%;
-  width:100vw;height:100vh;
-  min-width:100%;min-height:100%;
-  transform:translate(-50%,-50%)
-}
-
-.loading-gif-wrap iframe{
-  display:block;
-  width:100%!important;height:100%!important;
-  object-fit:cover;border:0
-}
-
-.loading-vignette{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse at center, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.7) 100%),
-    linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 20%, transparent 65%, rgba(0,0,0,0.75) 100%)
-}
-
-.loading-brand{
-  position:absolute;top:50%;left:0;right:0;z-index:2;
-  transform:translateY(-50%);
-  text-align:center;pointer-events:none;
-  padding:0 24px;
-  font-size:clamp(18px, 6vw, 34px);font-weight:900;letter-spacing:2.5px;
-  line-height:1.3;
-  text-transform:uppercase;
-  color:#fff;
-  text-shadow:0 2px 20px rgba(0,0,0,0.8),0 0 30px rgba(0,0,0,0.6)
-}
-
-/* Tiranga Header Gradient with Glassmorphism */
+/* Tiranga Header Gradient */
 .tiranga-header{
   background:linear-gradient(180deg, var(--tiranga-saffron) 0%, var(--tiranga-saffron) 33.33%, var(--tiranga-white) 33.33%, var(--tiranga-white) 66.66%, var(--tiranga-green) 66.66%, var(--tiranga-green) 100%);
-  padding:2px;border-radius:16px;margin-bottom:20px;
-  box-shadow:0 8px 32px rgba(225,48,108,0.2),inset 0 0 20px rgba(255,255,255,0.1);
-  backdrop-filter:blur(8px)
+  padding:2px;border-radius:12px;margin-bottom:20px
 }
 
 #channel-list{
-  position:fixed;inset:0;z-index:9998;
+  position:fixed;inset:0;background:#0a0a0a;z-index:9998;
   display:none;flex-direction:column;overflow-y:auto;
   padding:max(20px,env(safe-area-inset-top)) 16px
-           max(20px,env(safe-area-inset-bottom)) 16px;
-  background:#FFE1EC;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px)
+           max(20px,env(safe-area-inset-bottom)) 16px
 }
 
 #ch-header{
@@ -117,15 +71,15 @@ html,body{
 
 .brand-dot{
   width:12px;height:12px;border-radius:50%;
-  background:linear-gradient(135deg, var(--instagram-pink), var(--instagram-blush));
-  flex-shrink:0;box-shadow:0 0 12px rgba(225,48,108,0.8);
+  background:linear-gradient(135deg, var(--tiranga-saffron), var(--tiranga-green));
+  flex-shrink:0;box-shadow:0 0 12px rgba(255,153,51,0.8);
   animation:brand-pulse 2.2s ease-in-out infinite;
   position:relative;z-index:1
 }
 
 @keyframes brand-pulse{
-  0%,100%{opacity:1;box-shadow:0 0 12px rgba(225,48,108,0.8),0 0 24px rgba(255,105,180,0.4)}
-  50%{opacity:.85;box-shadow:0 0 20px rgba(225,48,108,1),0 0 32px rgba(255,192,203,0.6)}
+  0%,100%{opacity:1;box-shadow:0 0 12px rgba(255,153,51,0.8),0 0 24px rgba(19,136,8,0.4)}
+  50%{opacity:.85;box-shadow:0 0 20px rgba(255,153,51,1),0 0 32px rgba(19,136,8,0.6)}
 }
 
 #ch-header h1{
@@ -139,143 +93,42 @@ html,body{
   font-weight:500;position:relative;z-index:1;font-style:italic
 }
 
-/* Category System */
 #ch-grid{
-  display:flex;flex-direction:column
-}
-
-.ch-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
-  gap:9px
-}
-
-.category-section{
-  margin-bottom:28px;
-  animation:fadeIn .4s ease-out
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-#cat-bar{
-  margin-bottom:20px
-}
-
-#cat-chips{
-  display:flex;gap:8px;overflow-x:auto;
-  padding:4px 2px 6px;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none
-}
-#cat-chips::-webkit-scrollbar{display:none}
-
-.cat-chip{
-  --cc: var(--chip-color, var(--instagram-pink));
-  flex:0 0 auto;
-  display:flex;align-items:center;gap:6px;
-  padding:8px 14px;border-radius:20px;
-  border:2px solid var(--cc);
-  background:#fff;color:var(--cc);
-  font-size:12px;font-weight:700;letter-spacing:.3px;
-  cursor:pointer;white-space:nowrap;
-  transition:all .22s ease;
-  -webkit-tap-highlight-color:transparent
-}
-
-.cat-chip.active{
-  background:var(--cc);color:#fff;
-  box-shadow:0 6px 16px rgba(0,0,0,0.18);
-  transform:translateY(-1px)
-}
-
-.cat-chip .chip-count{
-  background:rgba(0,0,0,0.08);
-  padding:1px 7px;border-radius:10px;font-size:10px
-}
-.cat-chip.active .chip-count{background:rgba(255,255,255,0.3)}
-
-#cat-select{
-  display:none;
-  width:100%;padding:12px 14px;
-  border-radius:12px;border:2px solid var(--instagram-blush);
-  background:#fff;color:#8B0043;font-weight:700;font-size:13px;
-  -webkit-appearance:none;appearance:none
-}
-
-@media(max-width:560px){
-  #cat-chips{display:none}
-  #cat-select{display:block}
-}
-
-.category-header{
-  --cc: var(--cat-color, var(--instagram-pink));
-  margin-bottom:14px;padding:12px 14px;
-  background:color-mix(in srgb, var(--cc) 14%, #fff);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1.5px solid var(--cc);
-  border-radius:12px;
-  position:relative;overflow:hidden;
-  box-shadow:0 4px 14px rgba(0,0,0,0.08)
-}
-
-.category-header::after{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:var(--cc)
-}
-
-.category-icon{
-  font-size:19px;flex-shrink:0;position:relative;z-index:1
-}
-
-.category-title{
-  font-weight:800;font-size:14px;
-  letter-spacing:0.6px;position:relative;z-index:1;
-  text-transform:uppercase;
-  color:var(--cc)
-}
-
-.channel-count{
-  margin-left:auto;
-  background:var(--cc);
-  padding:4px 12px;border-radius:12px;
-  font-size:10px;color:#fff;
-  font-weight:700;position:relative;z-index:1;
-  box-shadow:0 3px 10px rgba(0,0,0,0.2)
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:10px
 }
 
 .ch-card{
-  background:var(--instagram-pink);
-  border:none;
-  border-radius:13px;padding:11px 6px;cursor:pointer;text-decoration:none;
+  background:linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  border:2px solid transparent;
+  border-image:linear-gradient(135deg, var(--tiranga-saffron), var(--tiranga-green)) 1;
+  border-radius:12px;padding:16px 12px;cursor:pointer;text-decoration:none;
   display:flex;align-items:center;justify-content:center;text-align:center;
-  min-height:52px;
-  transition:all .22s ease;
+  transition:all .25s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color:transparent;
-  box-shadow:0 4px 12px rgba(225,48,108,0.25)
+  box-shadow:0 0 0 0 rgba(255,153,51,0)
 }
 
 .ch-card:hover{
-  background:#FF1493;
+  background:linear-gradient(135deg, #222 0%, #1a1a1a 100%);
+  border-image:linear-gradient(135deg, var(--tiranga-saffron), var(--tiranga-green)) 1;
   transform:translateY(-4px);
-  box-shadow:0 10px 24px rgba(225,48,108,0.35)
+  box-shadow:0 8px 24px rgba(255,153,51,0.2),0 0 0 1px var(--tiranga-saffron)
 }
 
 .ch-card:active{
-  background:var(--instagram-glow);
-  transform:scale(.94)
+  transform:scale(.96);
+  background:#1c1c1c
 }
 
 .ch-card:focus-visible{
-  outline:2px solid var(--instagram-glow);outline-offset:3px;border-radius:16px
+  outline:2px solid var(--tiranga-saffron);outline-offset:3px;border-radius:12px
 }
 
 .ch-card span{
-  color:#fff;font-size:11.5px;font-weight:700;line-height:1.35;
-  text-shadow:0 1px 3px rgba(0,0,0,0.25)
+  color:#e0e0e0;font-size:13px;font-weight:600;line-height:1.4;
+  text-shadow:0 1px 2px rgba(0,0,0,0.5)
 }
 
 #pc{
@@ -294,26 +147,25 @@ video.mode-cover{object-fit:cover}
   transform:translateY(-10px);
   z-index:9997;
   display:flex;align-items:center;gap:7px;
-  padding:10px 18px;
-  background:linear-gradient(90deg, rgba(255,230,240,0.95), rgba(255,245,250,0.95));
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border:2px solid var(--instagram-pink);
-  font-size:12px;font-weight:700;letter-spacing:.3px;
+  padding:8px 16px;
+  background:rgba(10,10,10,.95);
+  border:1px solid var(--tiranga-saffron);
+  font-size:12px;font-weight:600;letter-spacing:.3px;
   border-radius:24px;pointer-events:none;opacity:0;
   transition:opacity .25s ease,transform .25s ease;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;
-  box-shadow:0 6px 20px rgba(225,48,108,0.3),inset 0 0 16px rgba(255,255,255,0.8)
+  box-shadow:0 2px 14px rgba(255,153,51,0.3)
 }
 
 #status.show{opacity:1;transform:translateY(0)}
 
 .st-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block}
 
-#status.ok   {color:var(--tiranga-saffron)} #status.ok   .st-dot{background:var(--tiranga-saffron)}
-#status.live {color:var(--tiranga-green)} #status.live .st-dot{background:var(--tiranga-green);animation:dot-pulse 2s ease-in-out infinite}
-#status.warn {color:var(--instagram-pink)} #status.warn .st-dot{background:var(--instagram-pink);animation:dot-pulse 1s ease-in-out infinite}
-#status.err  {color:#D32F2F} #status.err  .st-dot{background:#D32F2F}
+#status.ok   {color:#c0c0c0;border-color:var(--tiranga-saffron)} #status.ok   .st-dot{background:var(--tiranga-saffron)}
+#status.live {color:#c8c8c8;border-color:var(--tiranga-green)} #status.live .st-dot{background:var(--tiranga-green);animation:dot-pulse 2s ease-in-out infinite}
+#status.warn {color:#fcd34d;border-color:var(--tiranga-saffron)} #status.warn .st-dot{background:var(--tiranga-saffron);animation:dot-pulse 1s ease-in-out infinite}
+#status.err  {color:#fca5a5;border-color:#f87171} #status.err  .st-dot{background:#f87171}
 
 @keyframes dot-pulse{
   0%,100%{opacity:1;transform:scale(1)}
@@ -352,122 +204,41 @@ video.mode-cover{object-fit:cover}
 .shaka-controls-container button{color:#fff!important}
 .shaka-video-container{background-color:#000!important}
 
-/* Instagram Branding with Colorful Glassmorphism */
+/* Telegram & Branding */
 .social-links{
-  text-align:center;padding:16px;
-  margin-top:20px;
-  background:linear-gradient(135deg, rgba(255,105,180,0.12), rgba(255,192,203,0.12), rgba(225,48,108,0.12));
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:2px solid var(--instagram-pink);
-  border-radius:16px;
-  color:#8B0043;
-  font-size:10px;
-  letter-spacing:0.5px
-}
-
-.insta-header{
-  color:var(--instagram-pink);
-  font-weight:800;
-  margin-bottom:14px;
-  font-size:13px;
-  letter-spacing:1.2px;
-  text-transform:uppercase;
-  background:linear-gradient(90deg, var(--instagram-pink), var(--instagram-glow), var(--instagram-blush));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text
-}
-
-.insta-links{
-  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-  margin-top:12px
+  text-align:center;padding:16px 0;color:rgba(255,255,255,0.5);font-size:11px;
+  border-top:1px solid #222;margin-top:20px
 }
 
 .social-links a{
-  display:inline-flex;align-items:center;gap:6px;
-  color:#fff;
-  text-decoration:none;
-  padding:10px 16px;
-  background:linear-gradient(135deg, var(--instagram-pink), var(--instagram-glow));
-  backdrop-filter:blur(10px);
-  border:none;
-  border-radius:24px;
-  font-weight:700;
-  transition:all .32s cubic-bezier(0.34, 1.56, 0.64, 1);
-  font-size:11px;
-  box-shadow:0 6px 20px rgba(225,48,108,0.3)
+  color:var(--tiranga-saffron);text-decoration:none;margin:0 6px;
+  transition:color .2s
 }
 
-.social-links a:hover{
-  color:#fff;
-  background:linear-gradient(135deg, #FF1493, var(--instagram-pink));
-  transform:translateY(-4px) scale(1.08);
-  box-shadow:0 12px 32px rgba(225,48,108,0.5),0 0 20px rgba(255,105,180,0.4)
-}
-
-.social-links a:active{
-  transform:scale(.94)
-}
-
-/* Glassmorphism */
-.glass{
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,0.12);
-  box-shadow:inset 0 0 20px rgba(255,255,255,0.08),0 8px 32px rgba(0,0,0,0.3)
-}
-
-.glass-card{
-  background:rgba(255,255,255,0.06);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:inset 0 0 16px rgba(255,255,255,0.06),0 4px 20px rgba(0,0,0,0.2)
-}
-
-/* Instagram Pink/Blush Theme */
-:root{
-  --instagram-pink:#E1306C;
-  --instagram-blush:#FFC0CB;
-  --instagram-light:#FFE4E1;
-  --instagram-glow:#FF69B4;
-}
+.social-links a:hover{color:var(--tiranga-green)}
 
 /* Powered By Footer */
 .powered-by{
-  text-align:center;padding:16px;
-  color:rgba(139,0,67,0.55);font-size:11px;
-  letter-spacing:0.5px;
-  background:linear-gradient(90deg, rgba(255,153,51,0.08), rgba(255,192,203,0.1), rgba(19,136,8,0.08));
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  border-top:1px solid rgba(225,48,108,0.15);
-  border-radius:12px 12px 0 0
+  text-align:center;padding:12px;color:rgba(255,255,255,0.4);font-size:10px;
+  letter-spacing:0.5px;background:linear-gradient(90deg, rgba(255,153,51,0.05), transparent, rgba(19,136,8,0.05))
 }
 
 @media(max-width:380px){
   .fit-pill{font-size:9px;padding:2px 5px}
   .sp-btn{padding:0 5px!important}
   #ch-header h1{font-size:16px}
-  .ch-grid{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:7px}
-  .ch-card{padding:9px 5px;min-height:46px}
-  .ch-card span{font-size:10.5px}
 }
 </style>
 </head>
 <body>
 
 <div id="overlay">
-  <div class="loading-gif-wrap">
-    <div class="tenor-gif-embed" data-postid="10186000329976796225" data-share-method="host" data-aspect-ratio="1.79137" data-width="100%"><a href="https://tenor.com/view/anime-girl-anime-girl-blush-blush-blushing-gif-10186000329976796225">Anime Girl Anime Girl Blush GIF</a>from <a href="https://tenor.com/search/anime+girl-gifs">Anime Girl GIFs</a></div>
-    <div class="loading-vignette"></div>
-    <div class="loading-brand">RISHI EV</div>
-  </div>
-  <p id="loadMsg" style="color:#E1306C;font-weight:700">Loading…</p>
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <circle cx="20" cy="20" r="16" stroke="#1a1a1a" stroke-width="4"/>
+    <path d="M20 4a16 16 0 0 1 16 16" stroke="#FF9933" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <p id="loadMsg">Loading…</p>
 </div>
-<script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 <div id="status"></div>
 
@@ -481,24 +252,17 @@ video.mode-cover{object-fit:cover}
       </div>
     </div>
   </div>
-  <div id="cat-bar">
-    <div id="cat-chips"></div>
-    <select id="cat-select" aria-label="Select category"></select>
-  </div>
   <div id="ch-grid"></div>
   
   <div class="social-links">
-    <div class="insta-header">📸 Follow Us On Instagram</div>
-    <div class="insta-links">
-      <a href="https://instagram.com/saptarshiorg" target="_blank">@saptarshiorg</a>
-      <a href="https://instagram.com/rishi.ev" target="_blank">@rishi.ev</a>
-    </div>
+    Configured by <strong>Saptarshi Samanta</strong> • Tiranaga UI
+    <br/>
+    <a href="https://t.me/rishitv_engine" target="_blank">📱 Telegram Channel</a> | 
+    <a href="https://t.me/rishitv_support" target="_blank">💬 Support Group</a>
   </div>
   
   <div class="powered-by">
-    <div style="margin-bottom:8px;font-weight:700;color:#C2185B">🇮🇳 RISHI TV ENGINE</div>
-    <div style="font-size:9px;color:rgba(194,24,91,0.6)">Premium Streaming Platform</div>
-    <div style="font-size:9px;color:rgba(194,24,91,0.75);margin-top:6px">© RISHI EV | Saptarshi Samanta (saptarshiorg)</div>
+    🇮🇳 RISHI TV ENGINE • Premium Streaming Platform
   </div>
 </div>
 
@@ -518,19 +282,13 @@ video.mode-cover{object-fit:cover}
 var API = "https://sonujson-v3.pages.dev/Data/sports.json";
 
 var $overlay = document.getElementById("overlay");
-var $loadMsg  = document.getElementById("loadMsg");
-var $loadBrand= document.querySelector(".loading-brand");
+var $loadMsg = document.getElementById("loadMsg");
 var $status  = document.getElementById("status");
-var $list     = document.getElementById("channel-list");
-var $grid     = document.getElementById("ch-grid");
-var $catChips = document.getElementById("cat-chips");
-var $catSelect= document.getElementById("cat-select");
-var $pc       = document.getElementById("pc");
-var $vid      = document.getElementById("v");
+var $list    = document.getElementById("channel-list");
+var $grid    = document.getElementById("ch-grid");
+var $pc      = document.getElementById("pc");
+var $vid     = document.getElementById("v");
 var _stTmr   = null;
-
-var OVERLAY_MIN_MS   = 3000;
-var OVERLAY_SHOWN_AT = Date.now();
 
 function getTier(){
   var mem   = navigator.deviceMemory || 4;
@@ -567,14 +325,8 @@ function toast(msg, type, dur){
 }
 
 function setMsg(m)    { if($loadMsg) $loadMsg.textContent = m; }
-function hideOverlay(){
-  if(!$overlay) return;
-  var elapsed   = Date.now() - OVERLAY_SHOWN_AT;
-  var remaining = Math.max(0, OVERLAY_MIN_MS - elapsed);
-  setTimeout(function(){ $overlay.style.display = "none"; }, remaining);
-}
+function hideOverlay(){ if($overlay) $overlay.style.display = "none"; }
 function getChId()    { return new URLSearchParams(location.search).get("id") || ""; }
-function getChName()  { return new URLSearchParams(location.search).get("name") || ""; }
 
 function rawCookie(c){
   return c && c.startsWith("__hdnea__=") ? c.slice(10) : (c || "");
@@ -596,131 +348,14 @@ function errMsg(m){
   toast(m,"err",0);
 }
 
-var CATEGORY_DEFS = [
-  { name: "Star Sports",       icon: "🏆", color: "#00B4D8",
-    test: function(u){ return u.indexOf("STAR SPORTS") === 0 || u.indexOf("STARSPORTS") === 0; } },
-  { name: "Star Movies/Serial", icon: "🎬", color: "#FF6B35",
-    test: function(u){ return u.indexOf("STAR") === 0 || u.indexOf("JALSHA") !== -1; } },
-  { name: "Sony",          icon: "🎥", color: "#1CA7EC",
-    test: function(u){ return u.indexOf("SONY") === 0; } },
-  { name: "Zee / United8", icon: "🔷", color: "#9B59B6",
-    test: function(u){ return u.indexOf("ZEE") === 0 || u.indexOf("UNITED8") === 0 || u.indexOf("UNITED 8") === 0; } },
-  { name: "Kids",          icon: "🧸", color: "#2ECC71",
-    test: function(u){ return /KIDS?|CARTOON|HUNGAMA|POGO|NICK|DISNEY|SONIC|CHUTTI|BABY\s?TV|CBEEBIES/.test(u); } }
-];
-var OTHERS_DEF = { name: "Others", icon: "📡", color: "#E1306C" };
-var ALL_DEF    = { name: "all",    icon: "🇮🇳", color: "#E1306C" };
-
-function classify(name){
-  var u = String(name || "").toUpperCase().trim();
-  for(var i = 0; i < CATEGORY_DEFS.length; i++){
-    if(CATEGORY_DEFS[i].test(u)) return CATEGORY_DEFS[i].name;
-  }
-  return OTHERS_DEF.name;
-}
-
-function catMeta(catName){
-  for(var i = 0; i < CATEGORY_DEFS.length; i++){
-    if(CATEGORY_DEFS[i].name === catName) return CATEGORY_DEFS[i];
-  }
-  return OTHERS_DEF;
-}
-
-function groupByCategory(chs){
-  var buckets = {};
-  chs.forEach(function(ch){
-    var cat = classify(ch.name);
-    if(!buckets[cat]) buckets[cat] = [];
-    buckets[cat].push(ch);
-  });
-  var orderNames = CATEGORY_DEFS.map(function(d){ return d.name; }).concat([OTHERS_DEF.name]);
-  var groups = [];
-  orderNames.forEach(function(name){
-    if(buckets[name] && buckets[name].length) groups.push({ name: name, channels: buckets[name] });
-  });
-  return groups;
-}
-
-var ALL_CHANNELS = [];
-var ACTIVE_CAT   = "all";
-
-function buildSelector(groups){
-  var chips  = ['<button type="button" class="cat-chip' + (ACTIVE_CAT === "all" ? " active" : "") +
-    '" data-cat="all" style="--chip-color:' + ALL_DEF.color + '">' + ALL_DEF.icon +
-    ' <span>All Channels</span><span class="chip-count">' + ALL_CHANNELS.length + '</span></button>'];
-  var opts   = ['<option value="all">' + ALL_DEF.icon + ' All Channels (' + ALL_CHANNELS.length + ')</option>'];
-
-  groups.forEach(function(g){
-    var meta = catMeta(g.name);
-    chips.push(
-      '<button type="button" class="cat-chip' + (ACTIVE_CAT === g.name ? " active" : "") +
-      '" data-cat="' + g.name + '" style="--chip-color:' + meta.color + '">' + meta.icon +
-      ' <span>' + g.name + '</span><span class="chip-count">' + g.channels.length + '</span></button>'
-    );
-    opts.push('<option value="' + g.name + '">' + meta.icon + ' ' + g.name + ' (' + g.channels.length + ')</option>');
-  });
-
-  $catChips.innerHTML  = chips.join("");
-  $catSelect.innerHTML = opts.join("");
-  $catSelect.value     = ACTIVE_CAT;
-
-  Array.prototype.forEach.call($catChips.querySelectorAll(".cat-chip"), function(btn){
-    btn.addEventListener("click", function(){
-      ACTIVE_CAT = btn.getAttribute("data-cat");
-      renderChannels();
-    });
-  });
-  $catSelect.addEventListener("change", function(){
-    ACTIVE_CAT = $catSelect.value;
-    renderChannels();
-  });
-}
-
-function renderChannels(){
-  var groups = groupByCategory(ALL_CHANNELS);
-  var shown  = ACTIVE_CAT === "all" ? groups : groups.filter(function(g){ return g.name === ACTIVE_CAT; });
-
-  $grid.innerHTML = "";
-  shown.forEach(function(g){
-    var meta = catMeta(g.name);
-    var section = document.createElement("div");
-    section.className = "category-section";
-    section.style.setProperty("--cat-color", meta.color);
-
-    var header = document.createElement("div");
-    header.className = "category-header";
-    header.innerHTML =
-      '<span class="category-icon">' + meta.icon + '</span>' +
-      '<span class="category-title">' + g.name + '</span>' +
-      '<span class="channel-count">' + g.channels.length + '</span>';
-    section.appendChild(header);
-
-    var grid = document.createElement("div");
-    grid.className = "ch-grid";
-    g.channels.forEach(function(ch){
-      var a = document.createElement("a");
-      a.href = "?id=" + encodeURIComponent(ch.id) + "&name=" + encodeURIComponent(ch.name);
-      a.className = "ch-card";
-      a.innerHTML = "<span>" + ch.name + "</span>";
-      grid.appendChild(a);
-    });
-    section.appendChild(grid);
-
-    $grid.appendChild(section);
-  });
-
-  Array.prototype.forEach.call($catChips.querySelectorAll(".cat-chip"), function(btn){
-    btn.classList.toggle("active", btn.getAttribute("data-cat") === ACTIVE_CAT);
-  });
-  if($catSelect.value !== ACTIVE_CAT) $catSelect.value = ACTIVE_CAT;
-}
-
 function renderList(chs){
-  ALL_CHANNELS = chs;
-  var groups = groupByCategory(chs);
-  buildSelector(groups);
-  renderChannels();
-
+  chs.forEach(function(ch){
+    var a = document.createElement("a");
+    a.href = "?id=" + encodeURIComponent(ch.id);
+    a.className = "ch-card";
+    a.innerHTML = "<span>" + ch.name + "</span>";
+    $grid.appendChild(a);
+  });
   $list.style.display = "flex";
   hideOverlay();
 }
@@ -963,12 +598,6 @@ async function startPlayer(ch){
 
 async function main(){
   var id = getChId(), data;
-
-  if(id && $loadBrand){
-    var qName = getChName();
-    $loadBrand.textContent = qName ? "Loading " + qName : "Loading…";
-  }
-
   try{
     setMsg("Fetching Channels…");
     data = await loadData();
@@ -979,7 +608,6 @@ async function main(){
   if(!id){ renderList(data.channels); return; }
   var ch = data.channels.find(function(c){ return c.id === id; });
   if(!ch){ errMsg("Channel Not Found."); return; }
-  if($loadBrand) $loadBrand.textContent = "Loading " + ch.name;
   document.title = ch.name + " • Rishi TV Engine";
   await startPlayer(ch);
 }
