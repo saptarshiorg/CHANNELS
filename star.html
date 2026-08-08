@@ -2,172 +2,535 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Rishi EV - Saptarshi TV</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Rajdhani:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/controls.css">
+<title>Rishi TV Engine - भारतीय टेलीविजन</title>
+<link rel="preconnect" href="https://sonujson-v3.pages.dev/">
+<link rel="dns-prefetch" href="https://sonujson-v3.pages.dev/">
+<link rel="preconnect" href="https://www.jiotv.com/">
+<link rel="dns-prefetch" href="https://www.jiotv.com/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@5.2.4/dist/controls.css">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&display=swap">
 <style>
-:root{
-  --gold:#FF6A1A; --gold-light:#FFB347; --gold-dark:#C2270F;
-  --diamond:#00D9FF; --diamond-dark:#0A4A57;
-  --lavender:#FFB347; --live-red:#F04FB0; --white:#FFFFFF;
-  --text-muted:rgba(255,255,255,.55); --text-dim:rgba(255,255,255,.32);
-  --s0:#000000; --s1:rgba(255,255,255,.03); --s2:rgba(255,255,255,.055); --s3:rgba(255,255,255,.08);
-  --glass:rgba(255,255,255,.035); --glass-h:rgba(255,255,255,.07);
-  --blur:blur(20px) saturate(1.8); --blur-sm:blur(12px) saturate(1.5);
-  --ease:cubic-bezier(0.25,0.46,0.45,0.94); --spring:cubic-bezier(0.34,1.3,0.64,1);
-  --grad-gold:linear-gradient(135deg,#FFB347 0%,#00D9FF 55%,#0A4A57 100%);
-  --grad-brand:linear-gradient(135deg,#000000 0%,#0A4A57 50%,#00D9FF 100%);
-  --font-display:'Chakra Petch','Rajdhani',sans-serif;
-  --font-body:'Space Grotesk','Syne',sans-serif;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:'Satoshi','Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+html,body{
+  width:100%;height:100%;
+  background:#FFE1EC;
+  color:#C2185B;
+  overflow:hidden;
+  font-family:'Satoshi','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:var(--s0);overflow:hidden;
-  font-family:var(--font-body);
-  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
-#overlay{position:fixed;inset:0;z-index:9999;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(0,217,255,0.10) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 40% at 85% 80%, rgba(0,217,255,0.12) 0%, transparent 60%),
-    #000;
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-#overlay svg{animation:spin 1s linear infinite;filter:drop-shadow(0 0 10px rgba(0,217,255,.35))}
-@keyframes spin{to{transform:rotate(360deg)}}
-#overlay p{color:var(--text-muted);font-size:13px;letter-spacing:.4px;
-  text-align:center;padding:0 24px;font-weight:600;font-family:var(--font-display)}
+/* Tiranga Colors: Saffron #FF9933, White #FFFFFF, Green #138808 */
+:root{
+  --tiranga-saffron:#FF9933;
+  --tiranga-white:#FFFFFF;
+  --tiranga-green:#138808;
+  --tiranga-saffron-dark:#E67E22;
+  --tiranga-green-dark:#0D5F05;
+}
 
-#channel-list{position:fixed;inset:0;z-index:9998;
+#overlay{
+  position:fixed;inset:0;z-index:9999;
+  overflow:hidden;
+  background:#000
+}
+#overlay p{
+  position:absolute;left:0;right:0;bottom:max(28px,env(safe-area-inset-bottom));z-index:2;
+  color:rgba(255,255,255,0.85);font-size:12px;letter-spacing:.5px;
+  text-align:center;padding:0 24px;font-weight:500
+}
+
+.loading-gif-wrap{
+  position:absolute;inset:0;
+  overflow:hidden
+}
+
+.loading-gif-wrap .tenor-gif-embed{
+  position:absolute;top:50%;left:50%;
+  width:100vw;height:100vh;
+  min-width:100%;min-height:100%;
+  transform:translate(-50%,-50%)
+}
+
+.loading-gif-wrap iframe{
+  display:block;
+  width:100%!important;height:100%!important;
+  object-fit:cover;border:0
+}
+
+.loading-vignette{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(0,217,255,0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(0,217,255,0.10) 0%, transparent 60%),
-    #000;
+    radial-gradient(ellipse at center, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.7) 100%),
+    linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 20%, transparent 65%, rgba(0,0,0,0.75) 100%)
+}
+
+.loading-brand{
+  position:absolute;top:50%;left:0;right:0;z-index:2;
+  transform:translateY(-50%);
+  text-align:center;pointer-events:none;
+  padding:0 24px;
+  font-size:clamp(18px, 6vw, 34px);font-weight:900;letter-spacing:2.5px;
+  line-height:1.3;
+  text-transform:uppercase;
+  color:#fff;
+  text-shadow:0 2px 20px rgba(0,0,0,0.8),0 0 30px rgba(0,0,0,0.6)
+}
+
+/* Tiranga Header Gradient with Glassmorphism */
+.tiranga-header{
+  background:linear-gradient(180deg, var(--tiranga-saffron) 0%, var(--tiranga-saffron) 33.33%, var(--tiranga-white) 33.33%, var(--tiranga-white) 66.66%, var(--tiranga-green) 66.66%, var(--tiranga-green) 100%);
+  padding:2px;border-radius:16px;margin-bottom:20px;
+  box-shadow:0 8px 32px rgba(225,48,108,0.2),inset 0 0 20px rgba(255,255,255,0.1);
+  backdrop-filter:blur(8px)
+}
+
+#channel-list{
+  position:fixed;inset:0;z-index:9998;
   display:none;flex-direction:column;overflow-y:auto;
-  padding:max(20px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+  padding:max(20px,env(safe-area-inset-top)) 16px
+           max(20px,env(safe-area-inset-bottom)) 16px;
+  background:#FFE1EC;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px)
+}
 
-.brand-header{display:flex;flex-direction:column;align-items:center;gap:4px;
-  margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.08)}
-.brand-header .accent-bar{width:44px;height:3px;border-radius:8px;
-  background:linear-gradient(180deg,#00D9FF,#00D9FF);
-  box-shadow:0 0 10px rgba(0,217,255,.35);margin-bottom:10px}
-.brand-title{font-family:var(--font-display);font-weight:800;font-size:22px;
-  letter-spacing:.04em;color:var(--white);text-align:center}
-.brand-title span{background:var(--grad-gold);-webkit-background-clip:text;
-  background-clip:text;-webkit-text-fill-color:transparent}
-.brand-sub{font-family:var(--font-display);font-weight:600;font-size:11px;
-  letter-spacing:.25em;text-transform:uppercase;color:var(--lavender);opacity:.85}
+#ch-header{
+  display:flex;align-items:center;justify-content:center;
+  gap:12px;padding:16px;margin-bottom:20px;
+  background:linear-gradient(90deg, var(--tiranga-saffron) 0%, var(--tiranga-white) 50%, var(--tiranga-green) 100%);
+  border-radius:12px;box-shadow:0 4px 16px rgba(255,153,51,0.3);
+  position:relative;overflow:hidden
+}
 
-#ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
-.ch-card{
-  background:var(--glass);
-  backdrop-filter:var(--blur-sm);-webkit-backdrop-filter:var(--blur-sm);
-  border-radius:10px;padding:18px 12px;
-  cursor:pointer;text-decoration:none;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:8px;text-align:center;
+#ch-header::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(19,136,8,0.1) 100%);
+  pointer-events:none
+}
+
+.brand-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:linear-gradient(135deg, var(--instagram-pink), var(--instagram-blush));
+  flex-shrink:0;box-shadow:0 0 12px rgba(225,48,108,0.8);
+  animation:brand-pulse 2.2s ease-in-out infinite;
+  position:relative;z-index:1
+}
+
+@keyframes brand-pulse{
+  0%,100%{opacity:1;box-shadow:0 0 12px rgba(225,48,108,0.8),0 0 24px rgba(255,105,180,0.4)}
+  50%{opacity:.85;box-shadow:0 0 20px rgba(225,48,108,1),0 0 32px rgba(255,192,203,0.6)}
+}
+
+#ch-header h1{
+  color:#000;font-size:18px;font-weight:700;letter-spacing:1.2px;
+  text-shadow:0 2px 4px rgba(255,255,255,0.3);
+  position:relative;z-index:1;text-transform:uppercase
+}
+
+#ch-header .tagline{
+  font-size:10px;color:rgba(0,0,0,0.7);letter-spacing:0.5px;
+  font-weight:500;position:relative;z-index:1;font-style:italic
+}
+
+/* Category System */
+#ch-grid{
+  display:flex;flex-direction:column
+}
+
+.ch-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  gap:9px
+}
+
+.category-section{
+  margin-bottom:28px;
+  animation:fadeIn .4s ease-out
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+#cat-bar{
+  margin-bottom:20px
+}
+
+#cat-chips{
+  display:flex;gap:8px;overflow-x:auto;
+  padding:4px 2px 6px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none
+}
+#cat-chips::-webkit-scrollbar{display:none}
+
+.cat-chip{
+  --cc: var(--chip-color, var(--instagram-pink));
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:20px;
+  border:2px solid var(--cc);
+  background:#fff;color:var(--cc);
+  font-size:12px;font-weight:700;letter-spacing:.3px;
+  cursor:pointer;white-space:nowrap;
+  transition:all .22s ease;
+  -webkit-tap-highlight-color:transparent
+}
+
+.cat-chip.active{
+  background:var(--cc);color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,0.18);
+  transform:translateY(-1px)
+}
+
+.cat-chip .chip-count{
+  background:rgba(0,0,0,0.08);
+  padding:1px 7px;border-radius:10px;font-size:10px
+}
+.cat-chip.active .chip-count{background:rgba(255,255,255,0.3)}
+
+#cat-select{
+  display:none;
+  width:100%;padding:12px 14px;
+  border-radius:12px;border:2px solid var(--instagram-blush);
+  background:#fff;color:#8B0043;font-weight:700;font-size:13px;
+  -webkit-appearance:none;appearance:none
+}
+
+@media(max-width:560px){
+  #cat-chips{display:none}
+  #cat-select{display:block}
+}
+
+.category-header{
+  --cc: var(--cat-color, var(--instagram-pink));
+  margin-bottom:14px;padding:12px 14px;
+  background:color-mix(in srgb, var(--cc) 14%, #fff);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1.5px solid var(--cc);
+  border-radius:12px;
   position:relative;overflow:hidden;
-  box-shadow:0 4px 24px rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.04);
-  transition:transform .28s var(--spring),box-shadow .28s var(--ease),background .2s;
-  -webkit-tap-highlight-color:transparent}
-.ch-card::before{content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.055) 0%,transparent 50%);
-  border-radius:inherit;pointer-events:none}
-.ch-card:hover{background:var(--glass-h);transform:translateY(-4px) scale(1.02);
-  box-shadow:0 16px 50px rgba(0,0,0,.75),0 0 28px rgba(0,217,255,.25)}
-.ch-card:active{transform:scale(.97)}
-.ch-card:focus-visible{outline:2px solid var(--diamond);outline-offset:2px}
-.ch-card .live-dot{width:6px;height:6px;border-radius:50%;background:var(--live-red);
-  box-shadow:0 0 8px var(--live-red);animation:livePulse 1.5s ease-in-out infinite}
-@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
-.ch-card span.ch-label{color:var(--white);font-size:12px;font-weight:700;line-height:1.35;
-  font-family:var(--font-display);letter-spacing:.02em}
+  box-shadow:0 4px 14px rgba(0,0,0,0.08)
+}
 
-#pc{position:fixed;inset:0;background:#000;display:none;
-  align-items:center;justify-content:center;touch-action:manipulation}
-video{width:100%;height:100%;object-fit:contain;background:#000;will-change:transform}
+.category-header::after{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--cc)
+}
+
+.category-icon{
+  font-size:19px;flex-shrink:0;position:relative;z-index:1
+}
+
+.category-title{
+  font-weight:800;font-size:14px;
+  letter-spacing:0.6px;position:relative;z-index:1;
+  text-transform:uppercase;
+  color:var(--cc)
+}
+
+.channel-count{
+  margin-left:auto;
+  background:var(--cc);
+  padding:4px 12px;border-radius:12px;
+  font-size:10px;color:#fff;
+  font-weight:700;position:relative;z-index:1;
+  box-shadow:0 3px 10px rgba(0,0,0,0.2)
+}
+
+.ch-card{
+  background:var(--instagram-pink);
+  border:none;
+  border-radius:13px;padding:11px 6px;cursor:pointer;text-decoration:none;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:52px;
+  transition:all .22s ease;
+  -webkit-tap-highlight-color:transparent;
+  box-shadow:0 4px 12px rgba(225,48,108,0.25)
+}
+
+.ch-card:hover{
+  background:#FF1493;
+  transform:translateY(-4px);
+  box-shadow:0 10px 24px rgba(225,48,108,0.35)
+}
+
+.ch-card:active{
+  background:var(--instagram-glow);
+  transform:scale(.94)
+}
+
+.ch-card:focus-visible{
+  outline:2px solid var(--instagram-glow);outline-offset:3px;border-radius:16px
+}
+
+.ch-card span{
+  color:#fff;font-size:11.5px;font-weight:700;line-height:1.35;
+  text-shadow:0 1px 3px rgba(0,0,0,0.25)
+}
+
+#pc{
+  position:fixed;inset:0;background:#000;display:none;
+  align-items:center;justify-content:center;touch-action:manipulation
+}
+
+video{width:100%;height:100%;object-fit:contain;background:#000}
 video.mode-fill{object-fit:fill}
 video.mode-cover{object-fit:cover}
 
-#status{position:fixed;top:max(12px,env(safe-area-inset-top));
-  right:max(12px,env(safe-area-inset-right));z-index:9997;
-  padding:5px 13px;background:rgba(8,8,9,.9);
-  border:1px solid rgba(255,255,255,.08);
-  font-family:var(--font-display);
-  font-size:11px;font-weight:600;letter-spacing:.02em;border-radius:20px;
-  pointer-events:none;opacity:0;transition:opacity .3s;
-  max-width:260px;text-align:right;
-  backdrop-filter:var(--blur-sm);-webkit-backdrop-filter:var(--blur-sm)}
-#status.show{opacity:1}
-#status.ok{color:var(--diamond)}
-#status.warn{color:var(--gold-light)}
-#status.err{color:var(--live-red)}
+#status{
+  position:fixed;
+  top:max(14px,env(safe-area-inset-top));
+  right:12%;
+  transform:translateY(-10px);
+  z-index:9997;
+  display:flex;align-items:center;gap:7px;
+  padding:10px 18px;
+  background:linear-gradient(90deg, rgba(255,230,240,0.95), rgba(255,245,250,0.95));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:2px solid var(--instagram-pink);
+  font-size:12px;font-weight:700;letter-spacing:.3px;
+  border-radius:24px;pointer-events:none;opacity:0;
+  transition:opacity .25s ease,transform .25s ease;
+  white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;
+  box-shadow:0 6px 20px rgba(225,48,108,0.3),inset 0 0 16px rgba(255,255,255,0.8)
+}
+
+#status.show{opacity:1;transform:translateY(0)}
+
+.st-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block}
+
+#status.ok   {color:var(--tiranga-saffron)} #status.ok   .st-dot{background:var(--tiranga-saffron)}
+#status.live {color:var(--tiranga-green)} #status.live .st-dot{background:var(--tiranga-green);animation:dot-pulse 2s ease-in-out infinite}
+#status.warn {color:var(--instagram-pink)} #status.warn .st-dot{background:var(--instagram-pink);animation:dot-pulse 1s ease-in-out infinite}
+#status.err  {color:#D32F2F} #status.err  .st-dot{background:#D32F2F}
+
+@keyframes dot-pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.35;transform:scale(.55)}
+}
 
 .sp-btn{
   background:transparent!important;border:none!important;
   cursor:pointer!important;padding:0 8px!important;
-  opacity:.8;display:flex;align-items:center;justify-content:center;gap:5px;
-  height:100%;min-width:36px;transition:opacity .15s,color .15s;color:#fff!important;
-  -webkit-tap-highlight-color:transparent}
+  opacity:.75;display:flex;align-items:center;justify-content:center;
+  height:100%;min-width:36px;
+  transition:opacity .15s,color .15s;
+  color:#fff!important;-webkit-tap-highlight-color:transparent
+}
+
 .sp-btn:hover{opacity:1}
-.sp-btn:active{opacity:1;transform:scale(.92)}
-.sp-btn:focus-visible{outline:2px solid var(--diamond);outline-offset:2px;border-radius:6px}
-.sp-btn svg{width:18px;height:18px;display:block;pointer-events:none;flex-shrink:0}
-.sp-btn.active{opacity:1;color:var(--diamond)!important}
-.fit-ratio{font-size:11px;font-weight:600;letter-spacing:.2px;line-height:1;
-  white-space:nowrap;pointer-events:none;font-family:var(--font-display)}
+.sp-btn:active{opacity:1;transform:scale(.9)}
+.sp-btn:focus-visible{outline:2px solid var(--tiranga-saffron);outline-offset:2px;border-radius:6px}
+.sp-btn.active{opacity:1;color:var(--tiranga-saffron)!important}
+
+.sp-fit-btn{padding:0 7px!important;min-width:auto!important}
+
+.fit-pill{
+  font-size:10px;font-weight:700;letter-spacing:.4px;
+  padding:3px 7px;border-radius:4px;line-height:1;
+  border:1.5px solid var(--tiranga-saffron);
+  color:var(--tiranga-saffron);
+  pointer-events:none;white-space:nowrap;
+  transition:all .2s
+}
+
+.sp-fit-btn:hover      .fit-pill{border-color:var(--tiranga-green);color:var(--tiranga-green);box-shadow:0 0 8px rgba(19,136,8,0.4)}
+.sp-fit-btn.mode-fill  .fit-pill{border-color:var(--tiranga-saffron);color:var(--tiranga-saffron);box-shadow:0 0 8px rgba(255,153,51,0.4)}
+.sp-fit-btn.mode-cover .fit-pill{border-color:var(--tiranga-green);color:var(--tiranga-green);box-shadow:0 0 8px rgba(19,136,8,0.4)}
+
 .shaka-controls-container button{color:#fff!important}
 .shaka-video-container{background-color:#000!important}
 
-@media (max-width:400px){
-  .fit-ratio{font-size:9px}
-  .sp-btn{padding:0 6px!important;gap:3px}
+/* Instagram Branding with Colorful Glassmorphism */
+.social-links{
+  text-align:center;padding:16px;
+  margin-top:20px;
+  background:linear-gradient(135deg, rgba(255,105,180,0.12), rgba(255,192,203,0.12), rgba(225,48,108,0.12));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:2px solid var(--instagram-pink);
+  border-radius:16px;
+  color:#8B0043;
+  font-size:10px;
+  letter-spacing:0.5px
+}
+
+.insta-header{
+  color:var(--instagram-pink);
+  font-weight:800;
+  margin-bottom:14px;
+  font-size:13px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  background:linear-gradient(90deg, var(--instagram-pink), var(--instagram-glow), var(--instagram-blush));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text
+}
+
+.insta-links{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  margin-top:12px
+}
+
+.social-links a{
+  display:inline-flex;align-items:center;gap:6px;
+  color:#fff;
+  text-decoration:none;
+  padding:10px 16px;
+  background:linear-gradient(135deg, var(--instagram-pink), var(--instagram-glow));
+  backdrop-filter:blur(10px);
+  border:none;
+  border-radius:24px;
+  font-weight:700;
+  transition:all .32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size:11px;
+  box-shadow:0 6px 20px rgba(225,48,108,0.3)
+}
+
+.social-links a:hover{
+  color:#fff;
+  background:linear-gradient(135deg, #FF1493, var(--instagram-pink));
+  transform:translateY(-4px) scale(1.08);
+  box-shadow:0 12px 32px rgba(225,48,108,0.5),0 0 20px rgba(255,105,180,0.4)
+}
+
+.social-links a:active{
+  transform:scale(.94)
+}
+
+/* Glassmorphism */
+.glass{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:inset 0 0 20px rgba(255,255,255,0.08),0 8px 32px rgba(0,0,0,0.3)
+}
+
+.glass-card{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:inset 0 0 16px rgba(255,255,255,0.06),0 4px 20px rgba(0,0,0,0.2)
+}
+
+/* Instagram Pink/Blush Theme */
+:root{
+  --instagram-pink:#E1306C;
+  --instagram-blush:#FFC0CB;
+  --instagram-light:#FFE4E1;
+  --instagram-glow:#FF69B4;
+}
+
+/* Powered By Footer */
+.powered-by{
+  text-align:center;padding:16px;
+  color:rgba(139,0,67,0.55);font-size:11px;
+  letter-spacing:0.5px;
+  background:linear-gradient(90deg, rgba(255,153,51,0.08), rgba(255,192,203,0.1), rgba(19,136,8,0.08));
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-top:1px solid rgba(225,48,108,0.15);
+  border-radius:12px 12px 0 0
+}
+
+@media(max-width:380px){
+  .fit-pill{font-size:9px;padding:2px 5px}
+  .sp-btn{padding:0 5px!important}
+  #ch-header h1{font-size:16px}
+  .ch-grid{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:7px}
+  .ch-card{padding:9px 5px;min-height:46px}
+  .ch-card span{font-size:10.5px}
 }
 </style>
 </head>
 <body>
 
 <div id="overlay">
-  <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
-    <circle cx="20" cy="20" r="16" stroke="#161616" stroke-width="4"/>
-    <path d="M20 4a16 16 0 0 1 16 16" stroke="#00D9FF" stroke-width="4" stroke-linecap="round"/>
-  </svg>
-  <p id="loadMsg">Loading…</p>
+  <div class="loading-gif-wrap">
+    <div class="tenor-gif-embed" data-postid="10186000329976796225" data-share-method="host" data-aspect-ratio="1.79137" data-width="100%"><a href="https://tenor.com/view/anime-girl-anime-girl-blush-blush-blushing-gif-10186000329976796225">Anime Girl Anime Girl Blush GIF</a>from <a href="https://tenor.com/search/anime+girl-gifs">Anime Girl GIFs</a></div>
+    <div class="loading-vignette"></div>
+    <div class="loading-brand">RISHI EV</div>
+  </div>
+  <p id="loadMsg" style="color:#E1306C;font-weight:700">Loading…</p>
 </div>
+<script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 
 <div id="status"></div>
 
 <div id="channel-list">
-  <div class="brand-header">
-    <div class="accent-bar"></div>
-    <div class="brand-title">RISHI <span>EV</span></div>
-    <div class="brand-sub">Saptarshi TV</div>
+  <div class="tiranga-header">
+    <div id="ch-header">
+      <span class="brand-dot"></span>
+      <div>
+        <h1>Rishi TV Engine</h1>
+        <div class="tagline">भारतीय टेलीविजन प्लेटफॉर्म</div>
+      </div>
+    </div>
+  </div>
+  <div id="cat-bar">
+    <div id="cat-chips"></div>
+    <select id="cat-select" aria-label="Select category"></select>
   </div>
   <div id="ch-grid"></div>
+  
+  <div class="social-links">
+    <div class="insta-header">📸 Follow Us On Instagram</div>
+    <div class="insta-links">
+      <a href="https://instagram.com/saptarshiorg" target="_blank">@saptarshiorg</a>
+      <a href="https://instagram.com/rishi.ev" target="_blank">@rishi.ev</a>
+    </div>
+  </div>
+  
+  <div class="powered-by">
+    <div style="margin-bottom:8px;font-weight:700;color:#C2185B">🇮🇳 RISHI TV ENGINE</div>
+    <div style="font-size:9px;color:rgba(194,24,91,0.6)">Premium Streaming Platform</div>
+    <div style="font-size:9px;color:rgba(194,24,91,0.75);margin-top:6px">© RISHI EV | Saptarshi Samanta (saptarshiorg)</div>
+  </div>
 </div>
 
 <div id="pc">
   <video id="v" playsinline webkit-playsinline
-    preload="none" x5-video-player-type="h5" x5-video-player-fullscreen="true"></video>
+    preload="none"
+    x5-video-player-type="h5"
+    x5-video-player-fullscreen="true">
+  </video>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@5.2.4/dist/shaka-player.ui.min.js"></script>
 <script>
 (function(){
 "use strict";
 
-var API = "https://sonujson-v2.pages.dev/Data/sports.json";
+var API = "https://sonujson-v3.pages.dev/Data/sports.json";
 
 var $overlay = document.getElementById("overlay");
-var $loadMsg = document.getElementById("loadMsg");
+var $loadMsg  = document.getElementById("loadMsg");
+var $loadBrand= document.querySelector(".loading-brand");
 var $status  = document.getElementById("status");
-var $list    = document.getElementById("channel-list");
-var $grid    = document.getElementById("ch-grid");
-var $pc      = document.getElementById("pc");
-var $vid     = document.getElementById("v");
+var $list     = document.getElementById("channel-list");
+var $grid     = document.getElementById("ch-grid");
+var $catChips = document.getElementById("cat-chips");
+var $catSelect= document.getElementById("cat-select");
+var $pc       = document.getElementById("pc");
+var $vid      = document.getElementById("v");
 var _stTmr   = null;
+
+var OVERLAY_MIN_MS   = 3000;
+var OVERLAY_SHOWN_AT = Date.now();
 
 function getTier(){
   var mem   = navigator.deviceMemory || 4;
@@ -176,192 +539,260 @@ function getTier(){
   var conn  = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   var net   = conn ? (conn.effectiveType || "4g") : "4g";
   if(!mob) return "high";
-  if(mem<=1.5 || cores<=2 || net==="slow-2g" || net==="2g") return "low";
-  if(mem<=3   || cores<=4) return "mid";
+  if(mem <= 1.5 || cores <= 2 || net === "slow-2g" || net === "2g") return "low";
+  if(mem <= 3   || cores <= 4) return "mid";
   return "high";
 }
+
 var TIER = getTier();
 var PROF = {
-  low:  {buf:5,  reBuf:1.5, behind:15, maxH:480,  maxBw:1200000, bwEst:400000 },
-  mid:  {buf:8,  reBuf:1.5, behind:25, maxH:720,  maxBw:3500000, bwEst:1000000},
-  high: {buf:12, reBuf:1.5, behind:30, maxH:1080, maxBw:0,       bwEst:2000000}
+  low:  {buf:4,  reBuf:1.5, behind:10, maxH:480,  maxBw:1000000, bwEst:400000 },
+  mid:  {buf:7,  reBuf:1.5, behind:20, maxH:720,  maxBw:3000000, bwEst:1000000},
+  high: {buf:10, reBuf:1.5, behind:25, maxH:1080, maxBw:0,       bwEst:2000000}
 }[TIER];
 
-var FITS = ["contain","fill","cover"];
-var MODE_LABEL = {contain:"Fit",fill:"Fill",cover:"Zoom"};
-var FICO = {
-  contain:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="21" x2="22" y2="21"/></svg>',
-  fill:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
-  cover:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 7l3 3m0 0H7m2 0V8m9-1l-3 3m0 0h2m-2 0V8M6 13l3-3m0 0H7m2 0v2m9 1l-3-3m0 0h2m-2 0v2"/></svg>'
-};
-var PIP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="12" width="7" height="5" rx="1" fill="currentColor" stroke="none"/></svg>';
+var FITS       = ["contain","fill","cover"];
+var FIT_LABELS = {contain:"Fit", fill:"Fill", cover:"Zoom"};
 
-function toast(msg,type,dur){
-  $status.textContent=msg;
-  $status.className="show "+(type||"ok");
-  if(_stTmr) clearTimeout(_stTmr);
-  if(dur!==0){
-    _stTmr=setTimeout(function(){
-      $status.className=$status.className.replace("show","").trim();
-      _stTmr=null;
-    },dur||4000);
+function toast(msg, type, dur){
+  $status.innerHTML = '<span class="st-dot"></span><span>' + msg + '</span>';
+  $status.className = "show " + (type || "ok");
+  if(_stTmr){ clearTimeout(_stTmr); _stTmr = null; }
+  if(dur !== 0){
+    _stTmr = setTimeout(function(){
+      $status.className = $status.className.replace("show","").trim();
+      _stTmr = null;
+    }, dur || 4000);
   }
 }
-function setMsg(m)     { $loadMsg&&($loadMsg.textContent=m); }
-function hideOverlay() { $overlay&&($overlay.style.display="none"); }
-function getChId()     { return new URLSearchParams(location.search).get("id")||""; }
-function rawCookie(c)  { return c&&c.startsWith("__hdnea__=")?c.slice(10):(c||""); }
-function withCookie(u,r){
-  if(!u||!r) return u;
-  if(u.indexOf("__hdnea__")!==-1) return u;
-  return u+(u.indexOf("?")!==-1?"&":"?")+"__hdnea__="+r;
+
+function setMsg(m)    { if($loadMsg) $loadMsg.textContent = m; }
+function hideOverlay(){
+  if(!$overlay) return;
+  var elapsed   = Date.now() - OVERLAY_SHOWN_AT;
+  var remaining = Math.max(0, OVERLAY_MIN_MS - elapsed);
+  setTimeout(function(){ $overlay.style.display = "none"; }, remaining);
 }
+function getChId()    { return new URLSearchParams(location.search).get("id") || ""; }
+function getChName()  { return new URLSearchParams(location.search).get("name") || ""; }
+
+function rawCookie(c){
+  return c && c.startsWith("__hdnea__=") ? c.slice(10) : (c || "");
+}
+function withCookie(u, r){
+  if(!u || !r) return u;
+  if(u.indexOf("__hdnea__") !== -1) return u;
+  return u + (u.indexOf("?") !== -1 ? "&" : "?") + "__hdnea__=" + r;
+}
+
 async function loadData(){
-  var r=await fetch(API,{cache:"no-store",headers:{Accept:"application/json"}});
-  if(!r.ok) throw new Error("HTTP "+r.status);
-  var d=await r.json();
-  if(!d||!Array.isArray(d.channels)||!d.channels.length) throw new Error("empty");
-  return d;
+  var r = await fetch(API);
+  if(!r.ok) throw new Error(r.statusText);
+  return await r.json();
 }
-function renderList(channels){
+
+function errMsg(m){
   hideOverlay();
-  var f=document.createDocumentFragment();
-  channels.forEach(function(ch){
-    var a=document.createElement("a");
-    a.className="ch-card";
-    a.href="?id="+encodeURIComponent(ch.id);
-    a.innerHTML="<span class=\"live-dot\"></span><span class=\"ch-label\">"+ch.name+"</span>";
-    f.appendChild(a);
-  });
-  $grid.appendChild(f);
-  $list.style.display="flex";
-}
-function errMsg(msg){ setMsg(msg);$overlay.style.display="flex";toast(msg,"err",0); }
-function shakaErrStr(e){
-  if(!e) return "Unknown error";
-  var c={1:"Network",2:"Text",3:"Media",4:"Manifest",5:"Streaming",6:"DRM",7:"Player"};
-  var s=(c[e.category]||"Err")+" "+e.category+":"+e.code;
-  if(e.data&&e.data[0]&&typeof e.data[0]==="string") s+=" — "+e.data[0].slice(0,72);
-  return s;
+  toast(m,"err",0);
 }
 
-function ratioLabel(w,h){
-  if(!w||!h) return "";
-  function gcd(a,b){ return b?gcd(b,a%b):a; }
-  var g=gcd(w,h)||1, rw=w/g, rh=h/g;
-  var common={"16:9":16/9,"4:3":4/3,"21:9":21/9,"1:1":1,"9:16":9/16,"3:2":3/2,"5:4":5/4,"2:1":2};
-  var real=w/h, best=null, bestDiff=.02;
-  Object.keys(common).forEach(function(k){
-    var d=Math.abs(common[k]-real);
-    if(d<bestDiff){ bestDiff=d; best=k; }
-  });
-  if(best) return best;
-  if(rw<=40&&rh<=40) return rw+":"+rh;
-  return real.toFixed(2)+":1";
-}
+var CATEGORY_DEFS = [
+  { name: "Star Sports",       icon: "🏆", color: "#00B4D8",
+    test: function(u){ return u.indexOf("STAR SPORTS") === 0 || u.indexOf("STARSPORTS") === 0; } },
+  { name: "Star Movies/Serial", icon: "🎬", color: "#FF6B35",
+    test: function(u){ return u.indexOf("STAR") === 0 || u.indexOf("JALSHA") !== -1; } },
+  { name: "Sony",          icon: "🎥", color: "#1CA7EC",
+    test: function(u){ return u.indexOf("SONY") === 0; } },
+  { name: "Zee / United8", icon: "🔷", color: "#9B59B6",
+    test: function(u){ return u.indexOf("ZEE") === 0 || u.indexOf("UNITED8") === 0 || u.indexOf("UNITED 8") === 0; } },
+  { name: "Kids",          icon: "🧸", color: "#2ECC71",
+    test: function(u){ return /KIDS?|CARTOON|HUNGAMA|POGO|NICK|DISNEY|SONIC|CHUTTI|BABY\s?TV|CBEEBIES/.test(u); } }
+];
+var OTHERS_DEF = { name: "Others", icon: "📡", color: "#E1306C" };
+var ALL_DEF    = { name: "all",    icon: "🇮🇳", color: "#E1306C" };
 
-function injectControls(container,vid,player){
-  var panel=container.querySelector(".shaka-controls-button-panel");
-  if(!panel) return;
-  var anchor=panel.querySelector(".shaka-fullscreen-button");
-
-  var fitIdx=0;
-  var fitBtn=document.createElement("button");
-  fitBtn.className="sp-btn sp-fit-btn";
-  fitBtn.title="Video fit: Fit";
-  fitBtn.innerHTML=
-    '<span class="fit-icon">'+FICO.contain+'</span>'+
-    '<span class="fit-ratio">--</span>';
-  if(anchor) panel.insertBefore(fitBtn,anchor);
-  else panel.appendChild(fitBtn);
-
-  function applyFit(i){
-    fitIdx=i; var m=FITS[i];
-    vid.classList.remove("mode-fill","mode-cover");
-    if(m==="fill") vid.classList.add("mode-fill");
-    if(m==="cover") vid.classList.add("mode-cover");
-    var ic=fitBtn.querySelector(".fit-icon");
-    if(ic) ic.innerHTML=FICO[m];
-    fitBtn.title="Video fit: "+MODE_LABEL[m];
+function classify(name){
+  var u = String(name || "").toUpperCase().trim();
+  for(var i = 0; i < CATEGORY_DEFS.length; i++){
+    if(CATEGORY_DEFS[i].test(u)) return CATEGORY_DEFS[i].name;
   }
-  fitBtn.addEventListener("click",function(e){
-    e.stopPropagation();applyFit((fitIdx+1)%FITS.length);
+  return OTHERS_DEF.name;
+}
+
+function catMeta(catName){
+  for(var i = 0; i < CATEGORY_DEFS.length; i++){
+    if(CATEGORY_DEFS[i].name === catName) return CATEGORY_DEFS[i];
+  }
+  return OTHERS_DEF;
+}
+
+function groupByCategory(chs){
+  var buckets = {};
+  chs.forEach(function(ch){
+    var cat = classify(ch.name);
+    if(!buckets[cat]) buckets[cat] = [];
+    buckets[cat].push(ch);
   });
-  ["fullscreenchange","webkitfullscreenchange"].forEach(function(ev){
-    document.addEventListener(ev,function(){
-      if(!(document.fullscreenElement||document.webkitFullscreenElement)) applyFit(0);
+  var orderNames = CATEGORY_DEFS.map(function(d){ return d.name; }).concat([OTHERS_DEF.name]);
+  var groups = [];
+  orderNames.forEach(function(name){
+    if(buckets[name] && buckets[name].length) groups.push({ name: name, channels: buckets[name] });
+  });
+  return groups;
+}
+
+var ALL_CHANNELS = [];
+var ACTIVE_CAT   = "all";
+
+function buildSelector(groups){
+  var chips  = ['<button type="button" class="cat-chip' + (ACTIVE_CAT === "all" ? " active" : "") +
+    '" data-cat="all" style="--chip-color:' + ALL_DEF.color + '">' + ALL_DEF.icon +
+    ' <span>All Channels</span><span class="chip-count">' + ALL_CHANNELS.length + '</span></button>'];
+  var opts   = ['<option value="all">' + ALL_DEF.icon + ' All Channels (' + ALL_CHANNELS.length + ')</option>'];
+
+  groups.forEach(function(g){
+    var meta = catMeta(g.name);
+    chips.push(
+      '<button type="button" class="cat-chip' + (ACTIVE_CAT === g.name ? " active" : "") +
+      '" data-cat="' + g.name + '" style="--chip-color:' + meta.color + '">' + meta.icon +
+      ' <span>' + g.name + '</span><span class="chip-count">' + g.channels.length + '</span></button>'
+    );
+    opts.push('<option value="' + g.name + '">' + meta.icon + ' ' + g.name + ' (' + g.channels.length + ')</option>');
+  });
+
+  $catChips.innerHTML  = chips.join("");
+  $catSelect.innerHTML = opts.join("");
+  $catSelect.value     = ACTIVE_CAT;
+
+  Array.prototype.forEach.call($catChips.querySelectorAll(".cat-chip"), function(btn){
+    btn.addEventListener("click", function(){
+      ACTIVE_CAT = btn.getAttribute("data-cat");
+      renderChannels();
     });
   });
+  $catSelect.addEventListener("change", function(){
+    ACTIVE_CAT = $catSelect.value;
+    renderChannels();
+  });
+}
 
-  function updateRatio(){
-    var lbl=ratioLabel(vid.videoWidth,vid.videoHeight);
-    var badge=fitBtn.querySelector(".fit-ratio");
-    if(badge&&lbl) badge.textContent=lbl;
-  }
-  vid.addEventListener("loadedmetadata",updateRatio);
-  vid.addEventListener("resize",updateRatio);
-  updateRatio();
+function renderChannels(){
+  var groups = groupByCategory(ALL_CHANNELS);
+  var shown  = ACTIVE_CAT === "all" ? groups : groups.filter(function(g){ return g.name === ACTIVE_CAT; });
 
-  var pipOk=!!(document.pictureInPictureEnabled||
-    (vid.webkitSupportsPresentationMode&&typeof vid.webkitSetPresentationMode==="function"));
-  if(pipOk){
-    var pipBtn=document.createElement("button");
-    pipBtn.className="sp-btn sp-pip-btn";
-    pipBtn.title="Picture in Picture";
-    pipBtn.innerHTML=PIP_ICON;
-    panel.insertBefore(pipBtn,fitBtn);
+  $grid.innerHTML = "";
+  shown.forEach(function(g){
+    var meta = catMeta(g.name);
+    var section = document.createElement("div");
+    section.className = "category-section";
+    section.style.setProperty("--cat-color", meta.color);
 
-    function setPipState(active){
-      pipBtn.classList.toggle("active",active);
-      pipBtn.title=active?"Exit Picture in Picture":"Picture in Picture";
-    }
-    pipBtn.addEventListener("click",async function(e){
-      e.stopPropagation();
-      try{
-        if(document.pictureInPictureEnabled){
-          if(document.pictureInPictureElement) await document.exitPictureInPicture();
-          else await vid.requestPictureInPicture();
-        } else if(vid.webkitSupportsPresentationMode){
-          vid.webkitSetPresentationMode(
-            vid.webkitPresentationMode==="picture-in-picture"?"inline":"picture-in-picture"
-          );
-        }
-      } catch(_){ toast("PiP unavailable","warn",2500); }
+    var header = document.createElement("div");
+    header.className = "category-header";
+    header.innerHTML =
+      '<span class="category-icon">' + meta.icon + '</span>' +
+      '<span class="category-title">' + g.name + '</span>' +
+      '<span class="channel-count">' + g.channels.length + '</span>';
+    section.appendChild(header);
+
+    var grid = document.createElement("div");
+    grid.className = "ch-grid";
+    g.channels.forEach(function(ch){
+      var a = document.createElement("a");
+      a.href = "?id=" + encodeURIComponent(ch.id) + "&name=" + encodeURIComponent(ch.name);
+      a.className = "ch-card";
+      a.innerHTML = "<span>" + ch.name + "</span>";
+      grid.appendChild(a);
     });
-    vid.addEventListener("enterpictureinpicture",function(){ setPipState(true); });
-    vid.addEventListener("leavepictureinpicture",function(){ setPipState(false); });
-    if(vid.webkitPresentationMode!==undefined){
-      vid.addEventListener("webkitpresentationmodechanged",function(){
-        setPipState(vid.webkitPresentationMode==="picture-in-picture");
-      });
-    }
-  }
+    section.appendChild(grid);
+
+    $grid.appendChild(section);
+  });
+
+  Array.prototype.forEach.call($catChips.querySelectorAll(".cat-chip"), function(btn){
+    btn.classList.toggle("active", btn.getAttribute("data-cat") === ACTIVE_CAT);
+  });
+  if($catSelect.value !== ACTIVE_CAT) $catSelect.value = ACTIVE_CAT;
+}
+
+function renderList(chs){
+  ALL_CHANNELS = chs;
+  var groups = groupByCategory(chs);
+  buildSelector(groups);
+  renderChannels();
+
+  $list.style.display = "flex";
+  hideOverlay();
+}
+
+function injectControls(pc, vid){
+  if(!window.shaka || !window.shaka.ui) return false;
+  try{
+    var ui = new shaka.ui.Overlay(pc, vid);
+    return !!ui;
+  }catch(_){ return false; }
 }
 
 async function startPlayer(ch){
-  $pc.style.display="flex";
-  shaka.polyfill.installAll();
-  if(!shaka.Player.isBrowserSupported()){ errMsg("Browser not supported."); return; }
+  $pc.style.display = "flex";
+  var ui = new shaka.ui.Overlay($pc, $vid);
+  var controls = ui.getControls();
+  shaka.ui.Localization.DEFAULT_LOCALE = "en";
 
-  var player=new shaka.Player();
-  await player.attach($vid);
-
-  new shaka.ui.Overlay(player,$pc,$vid).configure({
-    controlPanelElements:["play_pause","mute","volume","time_and_duration","spacer","quality","fullscreen"],
-    seekBarColors:{base:"#a8a8a8",buffered:"#46e0e8",played:"#008705"}
+  ui.configure({
+    controlPanelElements:[
+      "play_pause",
+      "mute",
+      "volume",
+      "spacer",
+      "current_time",
+      "time_and_duration",
+      "spacer",
+      "closed_captions",
+      "quality","picture_in_picture","fullscreen"
+    ],
+    seekBarColors:{
+      base:    "#444",
+      buffered:"#FF9933",
+      played:  "#138808"
+    }
   });
-  setTimeout(function(){ injectControls($pc,$vid,player); },100);
 
-  var cookie=ch.cookie, raw=rawCookie(cookie);
-  var keyId=ch.key_id, key=ch.key, url=ch.stream_url;
+  var _injectCount = 0;
+  (function tryInject(){
+    if(injectControls($pc, $vid)) return;
+    if(++_injectCount < 5) setTimeout(tryInject, 150);
+  })();
 
-  var restrictionsRelaxed=false;
+  var cookie = ch.cookie;
+  var raw    = rawCookie(cookie);
+  var keyId  = ch.key_id;
+  var key    = ch.key;
+  var url    = ch.stream_url;
+  var restrictionsRelaxed = false;
+  var thermalApplied      = false;
+  var sessionStart        = Date.now();
+
+  var thermalTimer = setInterval(function(){
+    if(Date.now() - sessionStart < 60*60*1000) return;
+    clearInterval(thermalTimer);
+    if(thermalApplied) return;
+    thermalApplied = true;
+    try{
+      player.configure("streaming.bufferBehind", 8);
+      if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+        player.configure("abr.restrictions.maxHeight", Math.min(PROF.maxH, 720));
+      }
+    }catch(_){}
+  }, 60000);
 
   function buildCfg(){
-    var restr={};
+    var effMaxH = (thermalApplied && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent))
+      ? Math.min(PROF.maxH, 720) : PROF.maxH;
+    var restr = {};
     if(!restrictionsRelaxed){
-      if(PROF.maxH<1080) restr.maxHeight=PROF.maxH;
-      if(PROF.maxBw>0)   restr.maxBandwidth=PROF.maxBw;
+      if(effMaxH < 1080) restr.maxHeight    = effMaxH;
+      if(PROF.maxBw > 0) restr.maxBandwidth = PROF.maxBw;
     }
     return {
       drm:{ clearKeys:{ [keyId]:key } },
@@ -372,13 +803,13 @@ async function startPlayer(ch){
       },
       streaming:{
         lowLatencyMode:false,
-        bufferingGoal:  PROF.buf,
+        bufferingGoal:PROF.buf,
         rebufferingGoal:PROF.reBuf,
-        bufferBehind:   PROF.behind,
-        safeSeekOffset: 4,
-        stallEnabled:   true,
-        stallThreshold: 1,
-        stallSkip:      .3,
+        bufferBehind:PROF.behind,
+        safeSeekOffset:4,
+        stallEnabled:true,
+        stallThreshold:1,
+        stallSkip:.3,
         inaccurateManifestTolerance:0,
         retryParameters:{maxAttempts:5,baseDelay:500,backoffFactor:2,fuzzFactor:.5,timeout:30000}
       },
@@ -391,140 +822,169 @@ async function startPlayer(ch){
     };
   }
 
+  var player = ui.getPlayer();
   player.configure(buildCfg());
 
-  var T=shaka.net.NetworkingEngine.RequestType;
-  player.getNetworkingEngine().registerRequestFilter(function(type,req){
-    req.headers["Referer"]    ="https://www.jiotv.com/";
-    req.headers["User-Agent"] ="Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36";
-    req.headers["Cookie"]     =cookie;
-    if(type===T.MANIFEST||type===T.SEGMENT)
-      req.uris=req.uris.map(function(u){ return withCookie(u,raw); });
+  var T = shaka.net.NetworkingEngine.RequestType;
+  player.getNetworkingEngine().registerRequestFilter(function(type, req){
+    req.headers["Referer"]    = "https://www.jiotv.com/";
+    req.headers["User-Agent"] = "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36";
+    req.headers["Cookie"]     = cookie;
+    if(type === T.MANIFEST || type === T.SEGMENT)
+      req.uris = req.uris.map(function(u){ return withCookie(u, raw); });
   });
 
-  var refreshing=false, retries=0, edgeTried=false, lastTry=0, started=false;
+  var refreshing = false;
+  var retries    = 0;
+  var edgeTried  = false;
+  var lastTry    = 0;
+  var started    = false;
+  var stallTmr   = null;
 
-  function unmuteOnce(){ $vid.muted=false; }
-  $pc.addEventListener("pointerdown",unmuteOnce,{capture:true,once:true});
-  $pc.addEventListener("click",unmuteOnce,{capture:true,once:true});
-  $pc.addEventListener("keydown",unmuteOnce,{capture:true,once:true});
+  function unmuteOnce(){ $vid.muted = false; }
+  $pc.addEventListener("pointerdown", unmuteOnce, {capture:true,once:true});
+  $pc.addEventListener("click",       unmuteOnce, {capture:true,once:true});
+  $pc.addEventListener("keydown",     unmuteOnce, {capture:true,once:true});
 
   function goLiveEdge(){
     if(refreshing) return;
-    try{ player.goToLive(); edgeTried=true; toast("Syncing…","warn",2000); }
-    catch(_){ reload(); }
+    try{
+      player.goToLive();
+      edgeTried = true;
+      toast("Syncing To Live Edge…","warn",2000);
+    }catch(_){ reload(); }
   }
 
   async function reload(){
-    var now=Date.now();
-    if(refreshing||now-lastTry<1500) return;
-    if(retries>=5){ toast("Stream unavailable.","err",0); return; }
-    refreshing=true; lastTry=now; retries++;
-    toast("Reconnecting… ("+retries+"/5)","warn",0);
+    var now = Date.now();
+    if(refreshing || now - lastTry < 1500) return;
+    if(retries >= 5){ toast("Stream Unavailable. Please Try Again Later.","err",0); return; }
+    refreshing = true; lastTry = now; retries++;
+    toast("Reconnecting… (" + retries + " / 5)","warn",0);
     try{
-      var d=await loadData();
-      var fresh=d.channels.find(function(c){ return c.id===ch.id; });
+      var d     = await loadData();
+      var fresh = d.channels.find(function(c){ return c.id === ch.id; });
       if(!fresh) throw new Error("missing");
-      cookie=fresh.cookie; raw=rawCookie(cookie);
-      keyId=fresh.key_id; key=fresh.key; url=fresh.stream_url;
+      cookie = fresh.cookie; raw   = rawCookie(cookie);
+      keyId  = fresh.key_id; key   = fresh.key; url = fresh.stream_url;
       player.configure(buildCfg());
       await player.load(url);
       $vid.play().catch(function(){});
-      retries=0; edgeTried=false;
-      toast("● Live","ok",4000);
-    } catch(_){
-      setTimeout(reload, Math.min(1000*Math.pow(2,retries-1),8000));
-    } finally{ refreshing=false; }
+      retries = 0; edgeTried = false;
+      toast("🇮🇳 Live","live",4000);
+    }catch(_){
+      setTimeout(reload, Math.min(1000 * Math.pow(2, retries - 1), 8000));
+    }finally{ refreshing = false; }
   }
 
-  var RECOVERABLE=[1001,1002,1003,4012,6006,6007,7000,7001,7002];
+  var RECOVERABLE = [1001,1002,1003,4012,6006,6007,7000,7001,7002];
 
-  player.addEventListener("error",function(ev){
-    var err=ev.detail, code=err&&err.code;
-    if(code===4014 && !restrictionsRelaxed){
-      restrictionsRelaxed=true;
-      refreshing=true;
+  player.addEventListener("error", function(ev){
+    var err  = ev.detail;
+    var code = err && err.code;
+    if(code === 4014 && !restrictionsRelaxed){
+      restrictionsRelaxed = true;
+      refreshing = true;
       player.configure(buildCfg());
-      toast("Playing best available quality","warn",2500);
+      toast("Adjusting Quality…","warn",2000);
       player.load(url)
-        .then(function(){
-          $vid.play().catch(function(){});
-          toast("● Live","ok",4000);
-        })
+        .then(function(){ $vid.play().catch(function(){}); toast("🇮🇳 Live","live",4000); })
         .catch(function(){ reload(); })
-        .finally(function(){ refreshing=false; });
+        .finally(function(){ refreshing = false; });
       return;
     }
-
-    if(RECOVERABLE.indexOf(code)!==-1) reload();
-    else toast(shakaErrStr(err),"err",6000);
+    if(RECOVERABLE.indexOf(code) !== -1){
+      toast("Buffering…","warn",0);
+      setTimeout(function(){ if(!refreshing) reload(); }, 700);
+    } else {
+      toast("Error • Retrying…","err",6000);
+    }
   });
 
   try{
-    setMsg("Loading stream…");
-    toast("Loading…","warn",0);
+    setMsg("Loading Stream…");
+    toast("Loading Stream…","warn",0);
     await player.load(url);
     hideOverlay();
-    toast("Tap ▶ to start","ok",5000);
-  } catch(_){
+    toast("Ready — Tap ▶ To Play","ok",5000);
+  }catch(_){
     hideOverlay();
-    toast("Retrying…","warn",0);
-    setTimeout(reload,1500);
+    toast("Connection Error — Retrying…","warn",0);
+    setTimeout(reload, 1500);
     return;
   }
 
-  var stallTmr=null;
   function onStall(){
-    if(!started||stallTmr||refreshing) return;
+    if(stallTmr) return;
     toast("Buffering…","warn",0);
-    stallTmr=setTimeout(function(){
-      stallTmr=null;
+    if(!started || refreshing) return;
+    stallTmr = setTimeout(function(){
+      stallTmr = null;
       if(!edgeTried) goLiveEdge(); else reload();
-    },5000);
+    }, 5000);
   }
+
   function onPlaying(){
-    started=true;
-    if(stallTmr){ clearTimeout(stallTmr); stallTmr=null; }
-    edgeTried=false;
-    if(!refreshing) toast("● Live","ok",3000);
+    started = true;
+    if(stallTmr){ clearTimeout(stallTmr); stallTmr = null; }
+    edgeTried = false;
+    if(!refreshing) toast("🇮🇳 Live","live",3000);
   }
+
   $vid.addEventListener("waiting", onStall);
   $vid.addEventListener("stalled", onStall);
   $vid.addEventListener("playing", onPlaying);
-  $vid.addEventListener("error",   function(){ if(!refreshing) reload(); });
-
-  document.addEventListener("visibilitychange",function(){
-    if(!document.hidden){
-      setTimeout(function(){
-        if(started&&$vid.paused&&!refreshing) $vid.play().catch(function(){});
-      },400);
+  $vid.addEventListener("error",   function(){
+    if(!refreshing){
+      toast("Buffering…","warn",0);
+      setTimeout(function(){ if(!refreshing) reload(); }, 700);
     }
   });
 
-  var netConn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  document.addEventListener("visibilitychange", function(){
+    if(!document.hidden){
+      setTimeout(function(){
+        if(started && $vid.paused && !refreshing) $vid.play().catch(function(){});
+      }, 400);
+    }
+  });
+
+  var netConn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if(netConn){
-    netConn.addEventListener("change",function(){
-      if(!player||restrictionsRelaxed) return;
-      var t=netConn.effectiveType||"4g";
-      var h=t==="slow-2g"||t==="2g"?240:t==="3g"?480:PROF.maxH;
-      try{ player.configure("abr.restrictions.maxHeight",h); } catch(_){}
-      if(h<PROF.maxH) toast("Slow network — reducing quality","warn",3000);
+    netConn.addEventListener("change", function(){
+      if(!player || restrictionsRelaxed) return;
+      var t = netConn.effectiveType || "4g";
+      var h = t === "slow-2g" || t === "2g" ? 240 : t === "3g" ? 480 : PROF.maxH;
+      try{ player.configure("abr.restrictions.maxHeight", h); }catch(_){}
+      if(h < PROF.maxH) toast("Slow Network — Reducing Quality","warn",3000);
     });
   }
 }
 
 async function main(){
-  var id=getChId(), data;
-  try{ setMsg("Fetching channels…"); data=await loadData(); }
-  catch(_){ errMsg("Connection error."); return; }
+  var id = getChId(), data;
+
+  if(id && $loadBrand){
+    var qName = getChName();
+    $loadBrand.textContent = qName ? "Loading " + qName : "Loading…";
+  }
+
+  try{
+    setMsg("Fetching Channels…");
+    data = await loadData();
+  }catch(_){
+    errMsg("Connection Error. Please Check Your Internet.");
+    return;
+  }
   if(!id){ renderList(data.channels); return; }
-  var ch=data.channels.find(function(c){ return c.id===id; });
-  if(!ch){ errMsg("Channel not found."); return; }
-  document.title=ch.name+" — Rishi EV - Saptarshi TV";
+  var ch = data.channels.find(function(c){ return c.id === id; });
+  if(!ch){ errMsg("Channel Not Found."); return; }
+  if($loadBrand) $loadBrand.textContent = "Loading " + ch.name;
+  document.title = ch.name + " • Rishi TV Engine";
   await startPlayer(ch);
 }
 
-document.addEventListener("DOMContentLoaded",main);
+document.addEventListener("DOMContentLoaded", main);
 })();
 </script>
 </body>
